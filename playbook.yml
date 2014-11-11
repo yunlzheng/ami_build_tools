@@ -1,0 +1,16 @@
+- name: Build  Amazon Linux AMI lasted (PV)
+  hosts: local
+  connection: local
+  gather_facts: False
+  tasks:
+     - name: get lasted amazon linux PV AMI
+       local_action: get_aws_ami region=us-east-1
+       register: ami
+
+     - debug: var=ami
+
+     - name: use packer build aws ami
+       shell: packer build -var 'aws_region={{ ami.region }}' -var 'aws_source_ami={{ ami.id }}' packer.json
+       register: packer
+
+     - debug: var=packer.stdout
